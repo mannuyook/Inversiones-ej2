@@ -57,25 +57,6 @@ export default function Footer({ setSelectedCategory }) {
           </div>
         </div>
 
-        {/* COLUMNA 2: Enlaces Rápidos */}
-        <div>
-          <h4 className="text-xs font-black uppercase tracking-widest text-[#d4af37] mb-4">
-            Colecciones
-          </h4>
-          <ul className="space-y-2.5 text-xs text-gray-400">
-            {['Todos', 'Camisas', 'Gorras', 'Pantalones', 'Shorts'].map((cat) => (
-              <li key={cat}>
-                <button
-                  onClick={() => scrollToCatalog(cat)}
-                  className="hover:text-[#d4af37] transition-colors flex items-center gap-1.5"
-                >
-                  <i className="fa-solid fa-angle-right text-[10px] text-[#d4af37]"></i>
-                  {cat}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
 
         {/* COLUMNA 3: Métodos de Pago */}
         <div>
@@ -117,11 +98,26 @@ export default function Footer({ setSelectedCategory }) {
 
       </div>
 
-      {/* BARRA DE DERECHOS RESERVADOS */}
-      <div className="max-w-7xl mx-auto px-4 pt-6 border-t border-gray-800/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-500">
+    {/* BARRA DE DERECHOS RESERVADOS */}
+      <div className="max-w-7xl mx-auto px-4 pt-6 border-t border-gray-800/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-500 relative z-20">
         <p>© {new Date().getFullYear()} Inversiones EJ. Todos los derechos reservados.</p>
-        <p className="text-[11px]">
-          DEVELOPER <span className="text-[#d4af37] font-bold"></span>
+        <p className="text-[11px] flex items-center gap-1">
+          <span>Desarrollado por</span>
+          <a
+            href="https://wa.me/573044725824?text=Hola,%20me%20gustar%C3%ADa%20contactar%20al%20desarrollador%20de%20Inversiones%20EJ"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => {
+              e.stopPropagation();
+              window.open(
+                "https://wa.me/573044725824?text=Hola,%20me%20gustar%C3%ADa%20contactar%20al%20desarrollador%20de%20Inversiones%20EJ",
+                "_blank"
+              );
+            }}
+            className="text-[#d4af37] font-bold hover:underline transition-all cursor-pointer pointer-events-auto inline-block z-30"
+          >
+              DEVELOPER
+          </a>
         </p>
       </div>
     </footer>

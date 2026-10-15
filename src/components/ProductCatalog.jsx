@@ -1,40 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useCart } from '../context/CartContext';
-
-const products = [
-  // Camisas (1 al 10)
-  { id: '1', name: 'Camisa-1', price: 10.00, category: 'Camisas', image: '/image/camisa-1.jpeg', description: 'Camisa exclusiva en tono fresco, ideal para climas cálidos y ocasiones casuales o semi-formales.' },
-  { id: '2', name: 'Camisa-2', price: 10.00, category: 'Camisas', image: '/image/camisa-2.jpeg', description: 'Camisa de lino ligera en tono fresco, ideal para climas cálidos y ocasiones casuales o semi-formales.' },
-  { id: '3', name: 'Camisa-3', price: 10.00, category: 'Camisas', image: '/image/camisa-3.jpeg', description: 'Camisa de lino ligera en tono fresco, ideal para climas cálidos y ocasiones casuales o semi-formales.' },
-  { id: '4', name: 'Camisa-4', price: 10.00, category: 'Camisas', image: '/image/camisa-4.jpeg', description: 'Camisa premium con diseño exclusivo y moderno.' },
-  { id: '5', name: 'Camisa-5', price: 10.00, category: 'Camisas', image: '/image/camisa-5.jpeg', description: 'Camisa premium con diseño exclusivo y moderno.' },
-  { id: '6', name: 'Camisa-6', price: 10.00, category: 'Camisas', image: '/image/camisa-6.jpeg', description: 'Camisa premium con diseño exclusivo y moderno.' },
-  { id: '7', name: 'Camisa-7', price: 10.00, category: 'Camisas', image: '/image/camisa-7.jpeg', description: 'Camisa premium con diseño exclusivo y moderno.' },
-  { id: '8', name: 'Camisa-8', price: 10.00, category: 'Camisas', image: '/image/camisa-8.jpeg', description: 'Camisa premium con diseño exclusivo y moderno.' },
-  { id: '9', name: 'Camisa-9', price: 10.00, category: 'Camisas', image: '/image/camisa-9.jpeg', description: 'Camisa premium con diseño exclusivo y moderno.' },
-  { id: '10', name: 'Camisa-10', price: 10.00, category: 'Camisas', image: '/image/camisa-10.jpeg', description: 'Camisa premium con diseño exclusivo y moderno.' },
-
-  // Gorras (1 al 11)
-  { id: '11', name: 'Gorra-1', price: 10.00, category: 'Gorras', image: '/image/gorra-1.jpeg', description: 'Gorra luxury importada con ajuste perfecto y alta durabilidad.' },
-  { id: '12', name: 'Gorra-2', price: 10.00, category: 'Gorras', image: '/image/gorra-2.jpeg', description: 'Gorra luxury importada con ajuste perfecto y alta durabilidad.' },
-  { id: '13', name: 'Gorra-3', price: 10.00, category: 'Gorras', image: '/image/gorra-3.jpeg', description: 'Gorra luxury importada con ajuste perfecto y alta durabilidad.' },
-  { id: '14', name: 'Gorra-4', price: 10.00, category: 'Gorras', image: '/image/gorra-4.jpeg', description: 'Gorra luxury importada con ajuste perfecto y alta durabilidad.' },
-  { id: '15', name: 'Gorra-5', price: 10.00, category: 'Gorras', image: '/image/gorra-5.jpeg', description: 'Gorra luxury importada con ajuste perfecto y alta durabilidad.' },
-  { id: '16', name: 'Gorra-6', price: 10.00, category: 'Gorras', image: '/image/gorra-6.jpeg', description: 'Gorra luxury importada con ajuste perfecto y alta durabilidad.' },
-  { id: '17', name: 'Gorra-7', price: 10.00, category: 'Gorras', image: '/image/gorra-7.jpeg', description: 'Gorra luxury importada con ajuste perfecto y alta durabilidad.' },
-  { id: '18', name: 'Gorra-8', price: 10.00, category: 'Gorras', image: '/image/gorra-8.jpeg', description: 'Gorra luxury importada con ajuste perfecto y alta durabilidad.' },
-  { id: '19', name: 'Gorra-9', price: 10.00, category: 'Gorras', image: '/image/gorra-9.jpeg', description: 'Gorra luxury importada con ajuste perfecto y alta durabilidad.' },
-  { id: '20', name: 'Gorra-10', price: 10.00, category: 'Gorras', image: '/image/gorra-10.jpeg', description: 'Gorra luxury importada con ajuste perfecto y alta durabilidad.' },
-  { id: '21', name: 'Gorra-11', price: 10.00, category: 'Gorras', image: '/image/gorra-11.jpeg', description: 'Gorra luxury importada con ajuste perfecto y alta durabilidad.' },
-];
+import { supabase } from '@/lib/supabase';
 
 export default function ProductCatalog({ selectedCategory, setSelectedCategory }) {
+  // Estado para catálogo traído en tiempo real desde Supabase
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Estados del Modal de Detalle
   const [activeModalProduct, setActiveModalProduct] = useState(null);
-  
-  // Estado interno del modal
   const [selectedSize, setSelectedSize] = useState('M');
   const [quantity, setQuantity] = useState(1);
   const [useCashea, setUseCashea] = useState(false);
@@ -42,9 +19,29 @@ export default function ProductCatalog({ selectedCategory, setSelectedCategory }
 
   const { addToCart } = useCart();
 
+  // Consulta los productos de Supabase al montar el componente
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  async function fetchProducts() {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('products')
+      .select('*, product_variants(*)');
+
+    if (error) {
+      console.error('Error al cargar catálogo desde Supabase:', error.message);
+    } else {
+      setProducts(data || []);
+    }
+    setLoading(false);
+  }
+
+  // Filtrado por categoría
   const filteredProducts = selectedCategory === 'Todos'
     ? products
-    : products.filter(p => p.category.toLowerCase() === selectedCategory.toLowerCase());
+    : products.filter(p => p.category?.toLowerCase() === selectedCategory.toLowerCase());
 
   const handleOpenModal = (product) => {
     setActiveModalProduct(product);
@@ -78,7 +75,14 @@ export default function ProductCatalog({ selectedCategory, setSelectedCategory }
     }
 
     addToCart({
-      ...activeModalProduct,
+      id: activeModalProduct.id,
+      variant_id: activeModalProduct.product_variants?.[0]?.id,
+      serial_code: activeModalProduct.serial_code,
+      name: activeModalProduct.name,
+      price: activeModalProduct.price,
+      category: activeModalProduct.category,
+      image: activeModalProduct.image_url,
+      stock: activeModalProduct.product_variants?.[0]?.stock_quantity || 0,
       size: selectedSize,
       quantity,
       cashea: casheaInfo,
@@ -92,7 +96,7 @@ export default function ProductCatalog({ selectedCategory, setSelectedCategory }
     <section id="catalog-section" className="max-w-7xl mx-auto px-4 py-16">
       {/* Botones de Categorías */}
       <div className="flex justify-center gap-3 mb-12 flex-wrap">
-        {['Todos', 'Camisas', 'Gorras', 'Pantalones', 'Shorts'].map((cat) => (
+        {['Todos', 'Camisas', 'Gorras', 'Pantalones', 'Shorts', 'Relojes', 'Perfumes'].map((cat) => (
           <button
             key={cat}
             onClick={() => setSelectedCategory(cat)}
@@ -107,52 +111,87 @@ export default function ProductCatalog({ selectedCategory, setSelectedCategory }
         ))}
       </div>
 
-      {/* Cuadrícula de Productos Animada al Scroll */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {filteredProducts.map((product) => (
-          <motion.div
-            key={product.id}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-            className="bg-darkgray-900 border border-darkgray-800 rounded-2xl overflow-hidden shadow-xl hover:border-gold-500/50 transition-all duration-300 flex flex-col justify-between group relative"
-          >
-            <span className="absolute top-3 left-3 z-10 bg-darkgray-950/90 text-gold-400 text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-widest border border-gold-500/30">
-              NUEVO
-            </span>
+      {/* Cuadrícula de Productos */}
+      {loading ? (
+        <div className="text-center py-20 text-gold-400 font-bold uppercase tracking-wider">
+          Cargando Catálogo de Inversiones EJ...
+        </div>
+      ) : filteredProducts.length === 0 ? (
+        <div className="text-center py-20 text-gray-400 font-bold uppercase tracking-wider">
+          No hay artículos disponibles en esta categoría.
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {filteredProducts.map((product) => {
+            const stock = product.product_variants?.[0]?.stock_quantity || 0;
 
-            <div className="relative h-64 overflow-hidden bg-darkgray-950">
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-              />
-            </div>
-
-            <div className="p-5 flex-1 flex flex-col justify-between">
-              <div>
-                <span className="text-gray-400 text-xs uppercase tracking-wider block">{product.category}</span>
-                <h3 className="text-lg font-bold text-white mt-1 group-hover:text-gold-400 transition-colors">
-                  {product.name}
-                </h3>
-                <p className="text-xl font-extrabold text-gold-400 mt-2">
-                  ${product.price.toFixed(2)} USD
-                </p>
-              </div>
-
-              <button
-                onClick={() => handleOpenModal(product)}
-                className="mt-6 w-full bg-darkgray-950 hover:bg-gold-500 text-gold-400 hover:text-darkgray-950 border border-gold-500/40 font-bold py-3 rounded-xl transition-all uppercase tracking-wider text-xs active:scale-95"
+            return (
+              <motion.div
+                key={product.id}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+                className="bg-darkgray-900 border border-darkgray-800 rounded-2xl overflow-hidden shadow-xl hover:border-gold-500/50 transition-all duration-300 flex flex-col justify-between group relative"
               >
-                COMPRAR
-              </button>
-            </div>
-          </motion.div>
-        ))}
-      </div>
+                {/* Insignia de Stock / Serial */}
+                <div className="absolute top-3 left-3 right-3 z-10 flex justify-between items-center pointer-events-none">
+                  <span className="bg-darkgray-950/90 text-gold-400 text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-widest border border-gold-500/30">
+                    {product.serial_code || 'NUEVO'}
+                  </span>
+                  <span className={`text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-widest border ${
+                    stock > 0 
+                      ? 'bg-emerald-950/90 text-emerald-400 border-emerald-500/30' 
+                      : 'bg-rose-950/90 text-rose-400 border-rose-500/30'
+                  }`}>
+                    {stock > 0 ? `${stock} DISP.` : 'AGOTADO'}
+                  </span>
+                </div>
 
-      {/* MODAL DE DETALLE DE PRODUCTO Y CASHEA */}
+                {/* Imagen del Producto (Soporta Base64 / URLs) */}
+                <div className="relative h-64 overflow-hidden bg-darkgray-950 flex items-center justify-center">
+                  {product.image_url ? (
+                    <img
+                      src={product.image_url}
+                      alt={product.name}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  ) : (
+                    <span className="text-xs text-gray-600 font-bold uppercase tracking-widest">Sin Imagen</span>
+                  )}
+                </div>
+
+                {/* Info del Producto */}
+                <div className="p-5 flex-1 flex flex-col justify-between">
+                  <div>
+                    <span className="text-gray-400 text-xs uppercase tracking-wider block">{product.category}</span>
+                    <h3 className="text-lg font-bold text-white mt-1 group-hover:text-gold-400 transition-colors">
+                      {product.name}
+                    </h3>
+                    <p className="text-xl font-extrabold text-gold-400 mt-2">
+                      ${parseFloat(product.price).toFixed(2)} USD
+                    </p>
+                  </div>
+
+                  <button
+                    disabled={stock < 1}
+                    onClick={() => handleOpenModal(product)}
+                    className={`mt-6 w-full font-bold py-3 rounded-xl transition-all uppercase tracking-wider text-xs active:scale-95 ${
+                      stock > 0 
+                        ? 'bg-darkgray-950 hover:bg-gold-500 text-gold-400 hover:text-darkgray-950 border border-gold-500/40' 
+                        : 'bg-darkgray-950 text-gray-600 border border-darkgray-800 cursor-not-allowed'
+                    }`}
+                  >
+                    {stock > 0 ? 'COMPRAR' : 'AGOTADO'}
+                  </button>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Modal de Detalle de Producto y Cashea */}
       {activeModalProduct && (
         <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-darkgray-900 border border-darkgray-800 w-full max-w-2xl rounded-3xl overflow-hidden shadow-2xl relative my-8">
@@ -164,23 +203,29 @@ export default function ProductCatalog({ selectedCategory, setSelectedCategory }
             </button>
 
             <div className="grid grid-cols-1 md:grid-cols-2">
-              <div className="relative h-72 md:h-full bg-darkgray-950">
-                <img
-                  src={activeModalProduct.image}
-                  alt={activeModalProduct.name}
-                  className="w-full h-full object-cover"
-                />
+              <div className="relative h-72 md:h-full bg-darkgray-950 flex items-center justify-center">
+                {activeModalProduct.image_url ? (
+                  <img
+                    src={activeModalProduct.image_url}
+                    alt={activeModalProduct.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-xs text-gray-600 font-bold uppercase">Sin Foto</span>
+                )}
               </div>
 
               <div className="p-6 flex flex-col justify-between">
                 <div>
-                  <span className="text-gold-400 text-xs font-bold uppercase tracking-widest">{activeModalProduct.category}</span>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gold-400 text-xs font-bold uppercase tracking-widest">{activeModalProduct.category}</span>
+                    <span className="text-emerald-400 text-xs font-extrabold bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-500/30">
+                      Disponibles: {activeModalProduct.product_variants?.[0]?.stock_quantity || 0}
+                    </span>
+                  </div>
+
                   <h2 className="text-2xl font-extrabold text-white mt-1">{activeModalProduct.name}</h2>
                   <p className="text-2xl font-extrabold text-gold-400 mt-2">${(activeModalProduct.price * quantity).toFixed(2)} USD</p>
-                  
-                  <p className="text-gray-400 text-xs mt-3 leading-relaxed">
-                    {activeModalProduct.description}
-                  </p>
 
                   {/* Selector de Talla */}
                   <div className="mt-4">
@@ -204,7 +249,7 @@ export default function ProductCatalog({ selectedCategory, setSelectedCategory }
                     </div>
                   </div>
 
-                  {/* Selector de Cantidad */}
+                  {/* Selector de Cantidad con Tope al Stock Real */}
                   <div className="mt-4">
                     <label className="text-xs font-bold text-gray-300 uppercase tracking-wider block mb-2">Cantidad:</label>
                     <div className="flex items-center gap-3 bg-darkgray-950 px-4 py-2 rounded-xl w-fit border border-darkgray-800">
@@ -214,13 +259,18 @@ export default function ProductCatalog({ selectedCategory, setSelectedCategory }
                       >-</button>
                       <span className="font-extrabold text-white">{quantity}</span>
                       <button 
-                        onClick={() => setQuantity(quantity + 1)}
+                        onClick={() => {
+                          const maxStock = activeModalProduct.product_variants?.[0]?.stock_quantity || 1;
+                          if (quantity + 1 <= maxStock) {
+                            setQuantity(quantity + 1);
+                          }
+                        }}
                         className="text-white hover:text-gold-400 font-bold px-2"
                       >+</button>
                     </div>
                   </div>
 
-                  {/* CASHEA INTEGRATION */}
+                  {/* Integración Cashea */}
                   <div className="mt-5 bg-darkgray-950 p-4 rounded-2xl border border-darkgray-800">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-extrabold text-gold-400 uppercase tracking-wider flex items-center gap-1.5">
@@ -255,7 +305,6 @@ export default function ProductCatalog({ selectedCategory, setSelectedCategory }
                           ))}
                         </div>
 
-                        {/* Desglose de Pago Inicial y Cuotas */}
                         {(() => {
                           const { initialAmount, installment } = calculateCasheaDetails(activeModalProduct.price * quantity);
                           return (
@@ -284,7 +333,7 @@ export default function ProductCatalog({ selectedCategory, setSelectedCategory }
                     <i className="fa-solid fa-cart-plus"></i> Añadir al Carrito
                   </button>
                   <a
-                    href={`https://wa.me/584120000000?text=Hola%20Inversiones%20EJ,%20quiero%20consultar%20sobre%20el%20envío%20a%20Venezuela%20de%20${activeModalProduct.name}%20(Talla:%20${selectedSize})`}
+                    href={`https://wa.me/584243699953?text=Hola%20Inversiones%20EJ,%20quiero%20consultar%20sobre%20el%20envío%20a%20Venezuela%20de%20${activeModalProduct.name}%20(Ref:%20${activeModalProduct.serial_code})`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-full bg-darkgray-950 hover:bg-darkgray-800 text-white border border-darkgray-700 font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-wider"

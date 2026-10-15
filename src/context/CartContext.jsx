@@ -16,7 +16,17 @@ export function CartProvider({ children }) {
 
       if (existingIndex > -1) {
         const updated = [...prevCart];
-        updated[existingIndex].quantity += product.quantity;
+        const currentStock = product.stock || 99;
+        const requestedQty = updated[existingIndex].quantity + product.quantity;
+
+        // Limita al stock máximo disponible
+        if (requestedQty > currentStock) {
+          alert(`¡Stock insuficiente! Solo quedan ${currentStock} unidades disponibles.`);
+          updated[existingIndex].quantity = currentStock;
+        } else {
+          updated[existingIndex].quantity = requestedQty;
+        }
+
         const newTotal = updated[existingIndex].quantity * updated[existingIndex].price;
         updated[existingIndex].finalPrice = newTotal;
         
@@ -46,7 +56,6 @@ export function CartProvider({ children }) {
 
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
-  // Calcula el total a pagar HOY (suma de iniciales de Cashea + items de contado)
   const cartTotalToday = cart.reduce((acc, item) => {
     if (item.cashea) {
       return acc + parseFloat(item.cashea.initial);
@@ -54,7 +63,6 @@ export function CartProvider({ children }) {
     return acc + item.finalPrice;
   }, 0);
 
-  // Calcula el total general de contado sin financiamiento
   const cartTotalFull = cart.reduce((acc, item) => acc + item.finalPrice, 0);
 
   return (
