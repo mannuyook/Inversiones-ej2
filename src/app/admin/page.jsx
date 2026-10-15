@@ -11,6 +11,8 @@ export default function AdminPanel() {
   const [movements, setMovements] = useState([]);
   const [cashSessions, setCashSessions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [userRole, setUserRole] = useState('');
+  const [userEmail, setUserEmail] = useState('');
   
 
   // Tasa BCV oficial
