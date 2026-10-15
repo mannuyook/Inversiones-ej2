@@ -6,9 +6,6 @@ import { supabase } from '@/lib/supabase';
 
 export default function AdminPanel() {
   const router = useRouter();
-  const [userRole, setUserRole] = useState(null);
-  const [userEmail, setUserEmail] = useState('');
-
   const [activeTab, setActiveTab] = useState('inventory');
   const [products, setProducts] = useState([]);
   const [movements, setMovements] = useState([]);
