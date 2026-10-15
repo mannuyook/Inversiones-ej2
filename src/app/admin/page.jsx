@@ -66,18 +66,17 @@ export default function AdminPanel() {
   }, []);
 
   async function checkUserSession() {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      router.push('/admin/login');
-    } else {
-      const email = session.user.email;
-      const role = localStorage.getItem('ej_user_role') || 'ADMIN';
-      setUserRole(role);
-      setUserEmail(email);
-      fetchAllData();
-      fetchLiveBcvRate();
-    }
+    const email = localStorage.getItem('ej_user_email');
+    if (!email) {
+    router.push('/admin/login');
+  } else {
+    const role = localStorage.getItem('ej_user_role') || 'ADMIN';
+    setUserRole(role);
+    setUserEmail(email);
+    fetchAllData();
+    fetchLiveBcvRate();
   }
+}
 
   useEffect(() => {
     calculateNextSerial(selectedLetter);
