@@ -11,6 +11,7 @@ export default function POSPage() {
   const [cart, setCart] = useState([]);
   const [paymentMethod, setPaymentMethod] = useState('Efectivo (Bs / USD)');
   const [mounted, setMounted] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
 
   // Cashea y Tasa BCV
   const [useCashea, setUseCashea] = useState(false);
@@ -67,6 +68,13 @@ export default function POSPage() {
     fetchPendingWebOrders();
     checkActiveCashSession();
     fetchPosMovements();
+    const email = localStorage.getItem('ej_user_email');
+if (!email) {
+  window.location.href = '/pos/login'; // O la ruta de login del POS
+} else {
+  // tu código existente...
+  setCheckingAuth(false);
+}
   }, []);
 
   async function fetchCatalog() {
@@ -291,7 +299,13 @@ export default function POSPage() {
   }
 
   if (!mounted) return null;
-
+  if (checkingAuth) {
+  return (
+    <div className="min-h-screen bg-black text-white flex items-center justify-center font-bold">
+      Verificando acceso...
+    </div>
+  );
+}
   return (
     <div className="flex flex-col lg:flex-row h-screen bg-[#0b0c0e] text-white font-sans overflow-hidden relative">
       {toast.show && (

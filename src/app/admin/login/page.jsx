@@ -17,17 +17,17 @@ export default function AdminLogin() {
     setErrorMsg('')
 
     try {
-      const { data, error } = await supabase
+    const { data, error } = await supabase
         .from('admin_users')
         .select('*')
         .eq('email', email.trim())
         .eq('password', password.trim())
         .single()
 
-      if (error) {
+    if (error) {
         console.error('Error detallado de Supabase:', error)
         throw new Error(`Supabase dice: ${error.message}`)
-      }
+    }
 
       if (!data) {
         throw new Error('Usuario no encontrado en la tabla')

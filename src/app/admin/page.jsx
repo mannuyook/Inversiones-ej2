@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 
+
 export default function AdminPanel() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('inventory');
@@ -13,6 +14,7 @@ export default function AdminPanel() {
   const [loading, setLoading] = useState(true);
   const [userRole, setUserRole] = useState('');
   const [userEmail, setUserEmail] = useState('');
+  const [checkingAuth, setCheckingAuth] = useState(true);
   
 
   // Tasa BCV oficial
@@ -61,7 +63,20 @@ export default function AdminPanel() {
   const [foundProduct, setFoundProduct] = useState(null);
   const [deleting, setDeleting] = useState(false);
 
-  useEffect(() => {
+useEffect(() => {
+    async function checkUserSession() {
+      const email = localStorage.getItem('ej_user_email');
+      if (!email) {
+        window.location.href = '/admin/login'; // <--- Cambio 1: Redirección dura
+      } else {
+        const role = localStorage.getItem('ej_user_role') || 'ADMIN';
+        setUserRole(role);
+        setUserEmail(email);
+        setCheckingAuth(false);                 // <--- Cambio 2: ¡Quitamos el estado de carga!
+        fetchAllData();
+        fetchLiveBcvRate();
+      }
+    }
     checkUserSession();
   }, []);
 
@@ -299,7 +314,14 @@ export default function AdminPanel() {
   const alphabetLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
   if (!userRole) return null;
-
+  // Ponemos el bloqueo de seguridad aquí:
+  if (checkingAuth) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center font-bold">
+        Verificando acceso...
+      </div>
+    );
+  }
   return (
     <div className="flex min-h-screen bg-[#0b0c0e] text-white font-sans relative">
       <style jsx global>{`
