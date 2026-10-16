@@ -148,37 +148,69 @@ if (!email) {
 
   const filteredProducts = products.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase().trim()) || p.serial_code.toLowerCase().includes(searchQuery.toLowerCase().trim()));
 
-  function addToCart(product) {
+function addToCart(product) {
     const variant = product.product_variants?.[0];
     const stock = variant?.stock_quantity || 0;
+    
+    if (stock < 1) {
+      showToast('Producto agotado', 'error');
+      setSelectedProductModal(null);
+      return;
+    }
+
     const idx = cart.findIndex(i => i.product_id === product.id);
 
     if (idx > -1) {
-      if (cart[idx].quantity + 1 > stock) return showToast(`Stock insuficiente. Quedan ${stock}`, 'error');
+      // Si ya está en el carrito, validamos que sumarle 1 no supere el stock
+      if (cart[idx].quantity + 1 > stock) {
+        showToast(`Stock insuficiente. Solo quedan ${stock} unidades`, 'error');
+        return;
+      }
       const updated = [...cart];
       updated[idx].quantity += 1;
       updated[idx].subtotal = updated[idx].quantity * product.price;
       setCart(updated);
     } else {
-      if (stock < 1) return showToast('Producto agotado', 'error');
-      setCart([...cart, { product_id: product.id, variant_id: variant?.id, serial_code: product.serial_code, name: product.name, price: product.price, quantity: 1, subtotal: product.price }]);
+      setCart([...cart, { 
+        product_id: product.id, 
+        variant_id: variant?.id, 
+        serial_code: product.serial_code, 
+        name: product.name, 
+        price: product.price, 
+        quantity: 1, 
+        subtotal: product.price 
+      }]);
     }
+    
     showToast(`Agregado: ${product.serial_code}`, 'success');
     setSelectedProductModal(null);
   }
-
-  function updateQuantity(idx, delta) {
+    function updateQuantity(idx, delta) {
     const updated = [...cart];
-    const newQty = updated[idx].quantity + delta;
-    if (newQty <= 0) updated.splice(idx, 1);
-    else {
-      updated[idx].quantity = newQty;
-      updated[idx].subtotal = newQty * updated[idx].price;
+    const item = updated[idx];
+    
+    // Buscamos el producto en el catálogo general para chequear su stock real
+    const catalogProduct = products.find(p => p.id === item.product_id);
+    const variant = catalogProduct?.product_variants?.[0];
+    const stockDisponible = variant?.stock_quantity || 0;
+
+    const newQty = item.quantity + delta;
+
+    if (newQty <= 0) {
+      updated.splice(idx, 1);
+    } else {
+      // Si intenta incrementar, validamos que no pase del stock disponible
+      if (delta > 0 && newQty > stockDisponible) {
+        showToast(`Stock insuficiente. Máximo disponible: ${stockDisponible}`, 'error');
+        return; // Freno total para que no sume de más
+      }
+      
+      item.quantity = newQty;
+      item.subtotal = newQty * item.price;
     }
     setCart(updated);
   }
-
-  const totalAmountUsd = cart.reduce((acc, i) => acc + i.subtotal, 0);
+    const totalAmountUsd = cart.reduce((acc, i) => acc + i.subtotal, 0);
   const casheaPercentages = { 1: 0.60, 2: 0.50, 3: 0.40, 4: 0.40, 5: 0.40, 6: 0.40 };
   
   const initialPaymentUsd = useCashea ? totalAmountUsd * (casheaPercentages[casheaLevel] || 0.50) : totalAmountUsd;

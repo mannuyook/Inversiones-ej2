@@ -252,23 +252,46 @@ useEffect(() => {
     else { setFoundProduct(null); showToast(`Serial "${q}" no encontrado`, 'error'); }
   }
 
-  async function handleDeleteConfirmed() {
+async function handleDeleteConfirmed() {
     if (!foundProduct) return;
     setDeleting(true);
-    const { error } = await supabase.from('products').delete().eq('id', foundProduct.id);
-    if (!error) {
+
+    try {
+      // 1. Opcional pero recomendado: Eliminamos primero las variantes asociadas a este producto
+      const { error: varError } = await supabase
+        .from('product_variants')
+        .delete()
+        .eq('product_id', foundProduct.id);
+
+      if (varError) {
+        console.warn("Aviso al borrar variantes:", varError.message);
+      }
+
+      // 2. Procedemos a eliminar el producto principal de la tabla 'products'
+      const { error: prodError } = await supabase
+        .from('products')
+        .delete()
+        .eq('id', foundProduct.id);
+
+      if (prodError) throw prodError;
+
+      // 3. Registramos el movimiento en el Kardex
       await supabase.from('inventory_movements').insert([{
         movement_type: 'ELIMINACION_PRODUCTO',
         quantity_change: 0,
-        reason: `Eliminado por [${userRole}]: ${foundProduct.serial_code}`
+        reason: `Eliminado por [${userRole}]: Serial liberado ${foundProduct.serial_code} (${foundProduct.name})`
       }]);
-      showToast(`Producto eliminado correctamente`, 'success');
-      setFoundProduct(null); setSearchSerial('');
-      fetchAllData();
-    }
-    setDeleting(false);
-  }
 
+      showToast(`¡Producto eliminado! El serial ${foundProduct.serial_code} ha quedado libre.`, 'success');
+      setFoundProduct(null);
+      setSearchSerial('');
+      fetchAllData(); // Recargamos el catálogo y los datos
+    } catch (err) {
+      showToast('Error al eliminar producto: ' + err.message, 'error');
+    } finally {
+      setDeleting(false);
+    }
+  }
   async function handleSaveStockAdjustment() {
     if (!editingProduct) return;
     const newStockVal = parseInt(manualStockInput, 10);
