@@ -16,7 +16,7 @@ export default function POSPage() {
   // Cashea y Tasa BCV
   const [useCashea, setUseCashea] = useState(false);
   const [casheaLevel, setCasheaLevel] = useState(1);
-  const [bcvRate, setBcvRate] = useState(879.1225);
+  const [bcvRate, setBcvRate] = useState(880.1159);
   const [loadingBcv, setLoadingBcv] = useState(false);
 
   // Notificaciones y Modales
@@ -91,7 +91,7 @@ if (!email) {
       const json = await res.json();
       if (json && json.price) setBcvRate(parseFloat(json.price));
     } catch (err) {
-      setBcvRate(879.1225);
+      setBcvRate(880.1159);
     } finally {
       setLoadingBcv(false);
     }

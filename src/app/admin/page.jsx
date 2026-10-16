@@ -18,7 +18,7 @@ export default function AdminPanel() {
   
 
   // Tasa BCV oficial
-  const [bcvRate, setBcvRate] = useState(879.1225);
+  const [bcvRate, setBcvRate] = useState(880.1159);
 
   // Consulta de Ventas por Fecha
   const [selectedDate, setSelectedDate] = useState(() => {
@@ -103,7 +103,7 @@ useEffect(() => {
       const json = await res.json();
       if (json && json.price) setBcvRate(parseFloat(json.price));
     } catch (err) {
-      setBcvRate(879.1225);
+      setBcvRate(880.1159);
     }
   }
 
