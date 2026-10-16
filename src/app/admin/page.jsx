@@ -389,7 +389,7 @@ async function handleDeleteConfirmed() {
           <div className="bg-[#121418] border border-gray-800 rounded-xl p-2.5 mb-6 text-center space-y-0.5">
             <span className="text-[10px] text-gray-400 block uppercase">Sesión Activa</span>
             <span className="text-xs font-bold font-mono text-amber-400">
-              👤 ADMINISTRADOR
+                ADMINISTRADOR
             </span>
             <span className="text-[9px] text-gray-400 block truncate">{userEmail}</span>
           </div>
