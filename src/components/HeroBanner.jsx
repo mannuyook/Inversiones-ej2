@@ -86,7 +86,7 @@ export default function HeroBanner() {
               rel="noopener noreferrer"
               className="bg-[#14161a] hover:bg-gray-900 text-white border border-gray-700/80 hover:border-[#d4af37] font-bold px-6 py-3 rounded-xl transition-all active:scale-95 uppercase tracking-wider text-xs flex items-center gap-2"
             >
-              <i className="fa-brands fa-whatsapp text-emerald-400 text-base"></i> SOPORTE WHATSAPP
+              <i className="fa-brands fa-whatsapp text-emerald-400 text-base"></i> WHATSAPP
             </a>
           </div>
         </div>

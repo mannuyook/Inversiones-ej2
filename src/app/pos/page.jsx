@@ -381,20 +381,20 @@ function addToCart(product) {
 
           <div className="flex flex-wrap items-center gap-2">
             <button onClick={() => setShowCashModal(true)} className="text-[10px] bg-[#121418] text-amber-400 border border-amber-500/40 px-2.5 py-1.5 rounded-xl font-bold hover:bg-[#181a20]">
-              💵 {activeSession ? 'Cierre / Arqueo Bs' : 'Abrir Caja Bs'}
+              {activeSession ? 'Cierre / Arqueo Bs' : 'Abrir Caja Bs'}
             </button>
             <button onClick={() => { fetchPosMovements(); setShowMovementsModal(true); }} className="text-[10px] bg-[#121418] text-[#cca152] border border-[#cca152]/40 px-2.5 py-1.5 rounded-xl font-bold hover:bg-[#181a20]">
-              📋 Movimientos
+              Movimientos
             </button>
             <button onClick={() => setShowWebOrdersModal(true)} className={`relative text-[10px] px-3 py-1.5 rounded-xl border font-bold ${pendingWebOrdersCount > 0 ? 'bg-amber-500/20 border-amber-500 text-amber-400 animate-pulse' : 'bg-[#121418] border-[#cca152]/30 text-gray-300'}`}>
-              🌐 Compras Web {pendingWebOrdersCount > 0 && <span className="bg-rose-600 text-white text-[9px] px-1.5 rounded-full ml-1">{pendingWebOrdersCount}</span>}
+              Compras Web {pendingWebOrdersCount > 0 && <span className="bg-rose-600 text-white text-[9px] px-1.5 rounded-full ml-1">{pendingWebOrdersCount}</span>}
             </button>
-            <button onClick={fetchLiveBcvRate} className="text-[10px] bg-[#121418] text-[#cca152] border border-[#cca152]/40 px-2.5 py-1.5 rounded-xl font-bold">Tasa BCV: {bcvRate} Bs</button>
+
           </div>
         </header>
 
         <div className="mb-4">
-          <input type="text" placeholder="🔍 Buscar por serial o nombre..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="w-full bg-[#121418] border border-[#1a1d24] rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-[#cca152]" />
+          <input type="text" placeholder="Buscar por serial o nombre..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="w-full bg-[#121418] border border-[#1a1d24] rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-[#cca152]" />
         </div>
 
         <div className="flex-1 overflow-y-auto pr-1">
@@ -430,7 +430,7 @@ function addToCart(product) {
       {/* CARRITO DERECHA */}
       <div className="w-full lg:w-[420px] bg-[#0e1013] p-4 flex flex-col justify-between border-l border-[#1a1d24]">
         <div className="flex justify-between items-center border-b border-[#1a1d24] pb-2 mb-2">
-          <h2 className="text-xs font-bold uppercase">🛒 Factura Actual (Bolívares)</h2>
+          <h2 className="text-xs font-bold uppercase">Factura Actual (Bolívares)</h2>
           <span className="text-[11px] text-[#cca152] font-mono">{cart.length} ítems</span>
         </div>
 
@@ -460,7 +460,7 @@ function addToCart(product) {
         <div className="border-t border-[#1a1d24] pt-2 space-y-2">
           <div className="bg-[#121418] p-2.5 rounded-xl border border-[#cca152]/30 space-y-1">
             <div className="flex justify-between items-center text-xs">
-              <span className="font-bold text-[#cca152]">💳 Financiamiento Cashea</span>
+              <span className="font-bold text-[#cca152]">Financiamiento Cashea</span>
               <input type="checkbox" checked={useCashea} onChange={e => setUseCashea(e.target.checked)} className="accent-[#cca152]" />
             </div>
             {useCashea && (
@@ -491,12 +491,12 @@ function addToCart(product) {
           </select>
 
           {/* Botón Principal de Cobro en verde */}
-          <button onClick={handleCheckout} disabled={processingSale || cart.length === 0} className="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl font-extrabold uppercase text-xs transition shadow-lg">
-            {processingSale ? 'Procesando...' : '🖨️ Cobrar y Facturar (Bs)'}
+          <button onClick={handleCheckout} disabled={processingSale || cart.length === 0} className="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl font-extrabold uppercase text-lg transition shadow-lg">      
+            {processingSale ? 'Procesando...' : 'Cobrar y Facturar'} 
           </button>
 
-          <button onClick={() => window.location.reload()} className="w-full bg-rose-950/60 hover:bg-rose-900 text-rose-300 border border-rose-500/30 py-2 rounded-xl font-bold uppercase text-xs transition">
-            ❌ Cancelar / Recargar
+          <button onClick={() => window.location.reload()} className="w-full bg-rose-950/60 hover:bg-rose-900 text-rose-300 border border-rose-500/30 py-2 rounded-xl font-bold uppercase text-sm transition">
+            Cancelar 
           </button>
         </div>
       </div>
@@ -612,7 +612,7 @@ function addToCart(product) {
           <div className="bg-[#121418] border border-[#cca152]/40 rounded-2xl w-[96vw] h-[92vh] max-w-none p-6 text-white flex flex-col shadow-2xl">
             <div className="flex justify-between items-center pb-3 border-b border-gray-800">
               <div>
-                <h2 className="text-base font-bold text-[#cca152] uppercase tracking-wide">📋 Historial de Movimientos / Kardex</h2>
+                <h2 className="text-base font-bold text-[#cca152] uppercase tracking-wide">Historial de Movimientos / Kardex</h2>
                 <p className="text-xs text-gray-400">Auditoría detallada de inventario en tiempo real</p>
               </div>
               <button onClick={() => setShowMovementsModal(false)} className="text-gray-400 hover:text-white text-lg font-bold bg-[#181a20] px-4 py-1.5 rounded-xl border border-gray-800 transition">✕</button>

@@ -110,7 +110,7 @@ export default function Footer({ setSelectedCategory }) {
             onClick={(e) => {
               e.stopPropagation();
               window.open(
-                "https://wa.me/573044725824?text=Hola,%20me%20gustar%C3%ADa%20contactar%20al%20desarrollador%20de%20Inversiones%20EJ",
+                "https://wa.me/58text=Hola,%20me%20gustar%C3%ADa%20contactar%20al%20desarrollador%20de%20Inversiones%20EJ",
                 "_blank"
               );
             }}

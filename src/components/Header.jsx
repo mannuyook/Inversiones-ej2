@@ -14,8 +14,7 @@ export default function Header({ onSelectCategory }) {
           <span>COLECCIÓN DE CABALLERO 2026 - INVERSIONES EJ</span>
         </div>
         <div className="mx-auto md:mx-0 flex items-center gap-2">
-          <i className="fa-solid fa-plane text-[10px]"></i>
-          <span>ENVÍOS RÁPIDOS Y SEGUROS A VENEZUELA</span>
+
         </div>
         <div className="hidden lg:flex items-center gap-2">
           <i className="fa-solid fa-shield text-[10px]"></i>

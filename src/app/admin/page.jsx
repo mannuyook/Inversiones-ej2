@@ -395,11 +395,11 @@ async function handleDeleteConfirmed() {
           </div>
 
           <nav className="space-y-1.5 text-xs">
-            <button onClick={() => setActiveTab('inventory')} className={`w-full text-left px-4 py-2.5 rounded-lg font-semibold uppercase ${activeTab === 'inventory' ? 'bg-[#181a20] text-[#cca152] border border-[#cca152]/40' : 'text-gray-400'}`}>📦 Inventario & Alertas</button>
-            <button onClick={() => setActiveTab('new-product')} className={`w-full text-left px-4 py-2.5 rounded-lg font-semibold uppercase ${activeTab === 'new-product' ? 'bg-[#181a20] text-[#cca152] border border-[#cca152]/40' : 'text-gray-400'}`}>➕ Agregar Producto</button>
-            <button onClick={() => setActiveTab('delete-product')} className={`w-full text-left px-4 py-2.5 rounded-lg font-semibold uppercase ${activeTab === 'delete-product' ? 'bg-[#181a20] text-rose-400 border border-rose-500/30' : 'text-gray-400'}`}>🗑️ Eliminar Producto</button>
-            <button onClick={() => setActiveTab('cash-history')} className={`w-full text-left px-4 py-2.5 rounded-lg font-semibold uppercase ${activeTab === 'cash-history' ? 'bg-[#181a20] text-[#cca152] border border-[#cca152]/40' : 'text-gray-400'}`}>💵 Movimientos de Caja (Bs)</button>
-            <button onClick={() => { setActiveTab('movements'); fetchMovements(); }} className={`w-full text-left px-4 py-2.5 rounded-lg font-semibold uppercase ${activeTab === 'movements' ? 'bg-[#181a20] text-[#cca152] border border-[#cca152]/40' : 'text-gray-400'}`}>🔄 Movimientos (Kardex)</button>
+            <button onClick={() => setActiveTab('inventory')} className={`w-full text-left px-4 py-2.5 rounded-lg font-semibold uppercase ${activeTab === 'inventory' ? 'bg-[#181a20] text-[#cca152] border border-[#cca152]/40' : 'text-gray-400'}`}>Inventario & Alertas</button>
+            <button onClick={() => setActiveTab('new-product')} className={`w-full text-left px-4 py-2.5 rounded-lg font-semibold uppercase ${activeTab === 'new-product' ? 'bg-[#181a20] text-[#cca152] border border-[#cca152]/40' : 'text-gray-400'}`}>Agregar Producto</button>
+            <button onClick={() => setActiveTab('delete-product')} className={`w-full text-left px-4 py-2.5 rounded-lg font-semibold uppercase ${activeTab === 'delete-product' ? 'bg-[#181a20] text-rose-400 border border-rose-500/30' : 'text-gray-400'}`}>Eliminar Producto</button>
+            <button onClick={() => setActiveTab('cash-history')} className={`w-full text-left px-4 py-2.5 rounded-lg font-semibold uppercase ${activeTab === 'cash-history' ? 'bg-[#181a20] text-[#cca152] border border-[#cca152]/40' : 'text-gray-400'}`}>Movimientos de Caja (Bs)</button>
+            <button onClick={() => { setActiveTab('movements'); fetchMovements(); }} className={`w-full text-left px-4 py-2.5 rounded-lg font-semibold uppercase ${activeTab === 'movements' ? 'bg-[#181a20] text-[#cca152] border border-[#cca152]/40' : 'text-gray-400'}`}>Movimientos (Kardex)</button>
           </nav>
         </div>
 
